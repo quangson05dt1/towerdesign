@@ -425,8 +425,16 @@
         markers.push(window.arrowMarkerDir);
     }
 </script>
-<script async defer 
+<script>
+  function loadMapScript() {
     var mykey = config.SECRET_KEY;
-    src="https://maps.googleapis.com/maps/api/js?key="+mykey+"&callback=initMap"></script>
+    var script = document.createElement("script");
+    script.src = "https://maps.googleapis.com/maps/api/js?key=" + mykey + "&callback=initMap";
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+  loadMapScript();
+</script>
 </body>
 </html>
