@@ -9,32 +9,21 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 2rem;
+            padding: 1rem;
         }
         .container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
             max-width: 1400px;
+            margin: 0 auto;
             gap: 2rem;
         }
         .control-panel, .map-container {
             background-color: #fff;
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 1rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .map-container {
-            flex: 2;
-            height: 800px;
-            padding: 1rem;
-        }
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
         label {
             display: block;
@@ -57,6 +46,7 @@
             border-radius: 0.5rem;
             cursor: pointer;
             text-align: center;
+            transition: background-color 0.2s;
         }
         .btn:hover {
             background-color: #2563eb;
@@ -70,59 +60,69 @@
             background-color: #e5e7eb;
             padding: 1rem;
             border-radius: 0.5rem;
-            margin-top: 1.5rem;
+            margin-top: 1rem;
             text-align: center;
             font-size: 0.875rem;
             color: #1f2937;
         }
+        
+        /* Cải thiện bố cục trên di động */
+        .map-container {
+            height: 60vh; /* Chiều cao cố định trên di động */
+        }
+
+        /* Bố cục trên máy tính để bàn (màn hình lớn hơn 1024px) */
         @media (min-width: 1024px) {
             .container {
+                display: flex;
                 flex-direction: row;
+                min-height: 90vh;
             }
             .control-panel {
                 flex: 1;
             }
             .map-container {
                 flex: 3;
+                height: auto; /* Bỏ chiều cao cố định để lấp đầy không gian */
             }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container flex flex-col lg:flex-row">
     <!-- Bảng điều khiển -->
     <div class="control-panel">
         <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Thiết kế vị trí cột</h1>
         <div class="form-group">
             <label for="lat">Tọa độ tâm cột (Vĩ độ):</label>
-            <input type="text" id="lat" value="-25.744104">
+            <input type="text" id="lat" value="-25.744104" class="rounded-lg">
         </div>
         <div class="form-group">
             <label for="lng">Tọa độ tâm cột (Kinh độ):</label>
-            <input type="text" id="lng" value=" 32.671572">
+            <input type="text" id="lng" value=" 32.671572" class="rounded-lg">
         </div>
         <div class="form-group">
             <label for="loaiCot">Loại cột:</label>
-            <select id="loaiCot">
+            <select id="loaiCot" class="rounded-lg">
                 <option value="day_co">Dây co</option>
                 <option value="tu_dung">Tự đứng</option>
             </select>
         </div>
         <div class="form-group">
             <label for="huongCuaTram">Hướng cửa trạm (góc Azimuth - độ):</label>
-            <input type="number" id="huongCuaTram" value="0" min="0" max="360">
+            <input type="number" id="huongCuaTram" value="0" min="0" max="360" class="rounded-lg">
         </div>
         <div class="form-group">
             <label for="kichThuocHangRaoRong">Kích thước hàng rào (rộng x dài) (m):</label>
             <div class="flex gap-2">
-                <input type="number" id="kichThuocHangRaoRong" value="6" min="1" step="0.1">
-                <input type="number" id="kichThuocHangRaoDai" value="8" min="1" step="0.1">
+                <input type="number" id="kichThuocHangRaoRong" value="6" min="1" step="0.1" class="rounded-lg">
+                <input type="number" id="kichThuocHangRaoDai" value="8" min="1" step="0.1" class="rounded-lg">
             </div>
         </div>
         <div class="form-group">
             <label for="soMongCo">Số móng co:</label>
-            <select id="soMongCo">
+            <select id="soMongCo" class="rounded-lg">
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3" selected>3</option>
@@ -131,7 +131,7 @@
         </div>
         <div class="form-group">
             <label for="doCaoCot">Độ cao cột (m):</label>
-            <input type="number" id="doCaoCot" value="60.5" min="1" step="0.1">
+            <input type="number" id="doCaoCot" value="60.5" min="1" step="0.1" class="rounded-lg">
         </div>
         <button class="btn" onclick="veBanDo()">Vẽ bản đồ</button>
         <div id="infoPanel" class="info-panel"></div>
@@ -151,7 +151,10 @@
     let initialLayout = {};
 
     function initMap() {
-        const center = { lat: -25.744104, lng:   32.671572 };
+        const lat = parseFloat(document.getElementById('lat').value);
+        const lng = parseFloat(document.getElementById('lng').value);
+        const center = { lat, lng };
+
         map = new google.maps.Map(document.getElementById("map"), {
             center: center,
             zoom: 18,
@@ -210,8 +213,8 @@
             <p><strong>Kích thước hàng rào:</strong> ${kichThuocHangRaoRong} x ${kichThuocHangRaoDai} m</p>
             <p><strong>Số móng co:</strong> ${soMongCo}</p>
             <p><strong>Độ cao cột:</strong> ${doCaoCot} m</p>
-			<p><strong>Longitude:</strong> ${lng}</p>
-			<p><strong>Latiude:</strong> ${lat} </p>
+            <p><strong>Vĩ độ:</strong> ${lat} </p>
+            <p><strong>Kinh độ:</strong> ${lng}</p>
         `;
 
         const tamCot = { lat: lat, lng: lng };
@@ -255,7 +258,6 @@
     function drawMarkersAndLines() {
         clearMap();
         
-        // Tâm cột
         const huongCuaTram = parseFloat(document.getElementById('huongCuaTram').value);
         const tamCotMarker = new google.maps.Marker({
             position: initialLayout.center,
@@ -270,7 +272,6 @@
         });
         markers.push(tamCotMarker);
 
-        // Móng
         initialLayout.mongs.forEach((mong, i) => {
             const m = new google.maps.Marker({
                 position: mong,
@@ -294,10 +295,8 @@
             });
             polylines.push(line);
 
-            // Trong lúc kéo → thay đổi góc tạm
             google.maps.event.addListener(m, 'drag', (e) => onDrag(e, i + 1));
 
-            // Sau khi thả → “snap” về bán kính h/3
             google.maps.event.addListener(m, 'dragend', (e) => {
                 const center = markers[0].getPosition();
                 const dragged = e.latLng;
@@ -314,7 +313,6 @@
                 });
                 initialLayout.mongs = newMongs;
 
-                // Cập nhật vị trí marker & line về đúng bán kính h/3
                 initialLayout.mongs.forEach((mong, j) => {
                     markers[j + 1].setPosition(mong);
                     polylines[j].setPath([initialLayout.center, mong]);
@@ -426,7 +424,6 @@
         markers.push(window.arrowMarkerDir);
     }
 </script>
-
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrY0hJrxNYavZXbov8PzRy6-QYEIZs_gs&callback=initMap"></script>
 </body>
 </html>
