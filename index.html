@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thiết kế vị trí cột và móng</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type='text/javascript' src='config.js'></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -424,6 +425,8 @@
         markers.push(window.arrowMarkerDir);
     }
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrY0hJrxNYavZXbov8PzRy6-QYEIZs_gs&callback=initMap"></script>
+<script async defer 
+    var mykey = config.MY_KEY;
+    src="https://maps.googleapis.com/maps/api/js?key="+mykey+"&callback=initMap"></script>
 </body>
 </html>
