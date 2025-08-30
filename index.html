@@ -150,7 +150,11 @@
 <script src="config.js"></script>
 
 <script>
-  function loadGoogleMaps() {
+    function loadGoogleMaps() {
+    if (typeof CONFIG === "undefined") {
+      console.error("CONFIG chưa được load, kiểm tra lại config.js!");
+      return;
+    }
     const script = document.createElement("script");
     script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_KEY}&callback=initMap`;
     script.async = true;
@@ -158,9 +162,9 @@
     document.head.appendChild(script);
   }
 
-  // Gọi hàm để load
+  // Gọi hàm sau khi config.js đã load
   loadGoogleMaps();
 </script>
-    
+
 </body>
 </html>
