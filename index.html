@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiết kế vị trí cột và móng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            padding: 1rem;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 2rem;
+        }
+        .control-panel, .map-container {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #4b5563;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+        }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: #3b82f6;
+            color: #fff;
+            font-weight: 700;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #2563eb;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+            border-radius: 0.75rem;
+        }
+        .info-panel {
+            background-color: #e5e7eb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #1f2937;
+        }
+        
+        /* Cải thiện bố cục trên di động */
+        .map-container {
+            height: 60vh; /* Chiều cao cố định trên di động */
+        }
+
+        /* Bố cục trên máy tính để bàn (màn hình lớn hơn 1024px) */
+        @media (min-width: 1024px) {
+            .container {
+                display: flex;
+                flex-direction: row;
+                min-height: 90vh;
+            }
+            .control-panel {
+                flex: 1;
+            }
+            .map-container {
+                flex: 3;
+                height: auto; /* Bỏ chiều cao cố định để lấp đầy không gian */
+            }
+        }
+    </style>
+  <script type="module" crossorigin src="/assets/index-wi918xJF.js"></script>
+</head>
+<body>
+
+<div class="container flex flex-col lg:flex-row">
+    <!-- Bảng điều khiển -->
+    <div class="control-panel">
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Thiết kế vị trí cột</h1>
+        <div class="form-group">
+            <label for="lat">Tọa độ tâm cột (Vĩ độ):</label>
+            <input type="text" id="lat" value="-25.744104" class="rounded-lg">
+        </div>
+        <div class="form-group">
+            <label for="lng">Tọa độ tâm cột (Kinh độ):</label>
+            <input type="text" id="lng" value=" 32.671572" class="rounded-lg">
+        </div>
+        <div class="form-group">
+            <label for="loaiCot">Loại cột:</label>
+            <select id="loaiCot" class="rounded-lg">
+                <option value="day_co">Dây co</option>
+                <option value="tu_dung">Tự đứng</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="huongCuaTram">Hướng cửa trạm (góc Azimuth - độ):</label>
+            <input type="number" id="huongCuaTram" value="0" min="0" max="360" class="rounded-lg">
+        </div>
+        <div class="form-group">
+            <label for="kichThuocHangRaoRong">Kích thước hàng rào (rộng x dài) (m):</label>
+            <div class="flex gap-2">
+                <input type="number" id="kichThuocHangRaoRong" value="6" min="1" step="0.1" class="rounded-lg">
+                <input type="number" id="kichThuocHangRaoDai" value="8" min="1" step="0.1" class="rounded-lg">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="soMongCo">Số móng co:</label>
+            <select id="soMongCo" class="rounded-lg">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="doCaoCot">Độ cao cột (m):</label>
+            <input type="number" id="doCaoCot" value="60.5" min="1" step="0.1" class="rounded-lg">
+        </div>
+        <button class="btn" onclick="veBanDo()">Vẽ bản đồ</button>
+        <div id="infoPanel" class="info-panel"></div>
+    </div>
+    
+    <!-- Khung chứa bản đồ -->
+    <div class="map-container">
+        <div id="map"></div>
+    </div>
+</div>
+
+<!-- -->
+
+
+</body>
+</html>
