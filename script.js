@@ -4,7 +4,6 @@ let polylines = [];
 let rectangles = [];
 let initialLayout = {};
 
-
 function initMap() {
 	const center = { lat: -25.744104, lng: 32.671572 };
 	map = new google.maps.Map(document.getElementById("map"), {
@@ -349,6 +348,42 @@ function veBanDoAnten() {
 	// Vẽ các hướng anten
 	const antenHuongInputs = document.querySelectorAll('.anten-huong');
 	const antenDoDaiInputs = document.querySelectorAll('.anten-do-dai');
+	
+	
+	
+	
+	//Vẽ đường hướng bắc
+	const { dx, dy } = toCartesian(50, 0);
+	const diemCuoi = toLatLng(lat, lng, dx, dy);
+
+	// Vẽ đường
+	const line = new google.maps.Polyline({
+		path: [tamCot, diemCuoi],
+		geodesic: true,
+		strokeColor: '#FF0000',
+		strokeOpacity: 1.0,
+		strokeWeight: 2,
+		map: map
+	});
+	polylines.push(line);
+
+	// Vẽ marker ở cuối đường
+	const marker = new google.maps.Marker({
+		position: diemCuoi,
+		map: map,
+		icon: {
+			path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+			fillColor: '#FF0000',
+			fillOpacity: 1,
+			strokeWeight: 0,
+			scale: 6,
+			rotation: 0
+		},
+		title: `Hướng chính bắc`
+	});
+	markers.push(marker);
+	
+	///
 	
 	for (let i = 0; i < soAnten; i++) {
 		const huong = parseFloat(antenHuongInputs[i].value);
