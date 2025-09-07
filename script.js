@@ -15,7 +15,7 @@ function initMap() {
 		gestureHandling: "greedy"
 	});
 	openTab('tab1');
-	updateAntenFields();
+	addAntenFields(); // Sửa lỗi ở đây
 }
 
 function openTab(tabName) {
@@ -411,7 +411,6 @@ function veBanDoAnten() {
 	// Vẽ các hướng anten
 	const antenHuongInputs = document.querySelectorAll('.anten-huong');
 	const antenDoDaiInputs = document.querySelectorAll('.anten-do-dai');
-	
 	
 	//Vẽ đường hướng bắc
 	const { dx, dy } = toCartesian(50, 0);
