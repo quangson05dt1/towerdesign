@@ -15,7 +15,7 @@ function initMap() {
 		gestureHandling: "greedy"
 	});
 	openTab('tab1');
-	addAntenFields(); // Sửa lỗi ở đây
+	addAntenFields();
 }
 
 function openTab(tabName) {
@@ -194,8 +194,10 @@ function drawMarkersAndLinesCot() {
 			updateFence();
 		});
 	});
-
+	
+	// Thêm sự kiện drag và dragend cho tâm cột để di chuyển toàn bộ bản vẽ
 	google.maps.event.addListener(tamCotMarker, 'drag', (e) => onDragAll(e));
+	google.maps.event.addListener(tamCotMarker, 'dragend', (e) => onDragAll(e));
 	updateFence();
 }
 
@@ -205,13 +207,11 @@ function onDragAll(event) {
 	const latDiff = newCenter.lat() - initialLayout.center.lat;
 	const lngDiff = newCenter.lng() - initialLayout.center.lng;
 
-	initialLayout.center = { lat: newCenter.lat(), lng: newCenter.lng() };
-	
 	// Cập nhật giá trị trong input
 	document.getElementById('lat1').value = newCenter.lat().toFixed(6);
 	document.getElementById('lng1').value = newCenter.lng().toFixed(6);
 	document.getElementById('lat2').value = newCenter.lat().toFixed(6);
-	document.getElementById('lng2').value = newCenter.lng().toFixed(6);
+	document.getElementById('lng2').value = newCenter.lng().toFixed(6); // Sửa lỗi ở đây
 	
 	// Cập nhật vị trí của tất cả các đối tượng
 	markers.forEach(m => {
@@ -235,6 +235,9 @@ function onDragAll(event) {
 		mong.lat += latDiff;
 		mong.lng += lngDiff;
 	});
+	
+	// Cập nhật center trong layout cuối cùng sau khi đã tính toán
+	initialLayout.center = { lat: newCenter.lat(), lng: newCenter.lng() };
 
 	// Cập nhật bảng thông tin cho tab đang hoạt động
 	if (activeTab === 'tab1') {
@@ -443,7 +446,6 @@ function veBanDoAnten() {
 	});
 	markers.push(marker);
 	
-	
 	for (let i = 0; i < soAnten; i++) {
 		const huong = parseFloat(antenHuongInputs[i].value);
 		const doDai = parseFloat(antenDoDaiInputs[i].value);
@@ -486,8 +488,10 @@ function veBanDoAnten() {
 	}
 	
 	document.getElementById('infoPanel2').innerHTML = infoHtml;
-
+	
+	// Thêm sự kiện drag và dragend cho tâm cột để di chuyển toàn bộ bản vẽ
 	google.maps.event.addListener(tamCotMarker, 'drag', (e) => onDragAll(e));
+	google.maps.event.addListener(tamCotMarker, 'dragend', (e) => onDragAll(e));
 }
 
 function loadGoogleMaps(){
