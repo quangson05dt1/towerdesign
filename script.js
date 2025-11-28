@@ -3,59 +3,76 @@ let markers = [];
 let polylines = [];
 let rectangles = [];
 let initialLayout = {};
-/* ============================================================
-   1. ĐẢM BẢO Google Maps callback toàn cục (bắt buộc cho mobile)
-   ============================================================ */
-//window.initMap = initMap;
-
+let activeTab = 'tab1';
 
 function initMap() {
-        const center = { lat: -25.744104, lng:   32.671572 };
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: center,
-            zoom: 18,
-            mapTypeId: 'satellite',
-            disableDefaultUI: true,
-            gestureHandling: "greedy"
-        });
-        veBanDo();
+	const center = { lat: -25.744104, lng: 32.671572 };
+	map = new google.maps.Map(document.getElementById("map"), {
+		center: center,
+		zoom: 18,
+		mapTypeId: 'satellite',
+		disableDefaultUI: true,
+		gestureHandling: "greedy"
+	});
+	openTab('tab1');
+	addAntenFields();
+}
+
+function openTab(tabName) {
+	activeTab = tabName;
+	document.querySelectorAll('.tab-content').forEach(tabContent => {
+		tabContent.classList.remove('active');
+	});
+	document.querySelectorAll('.tab-button').forEach(tabButton => {
+		tabButton.classList.remove('active');
+	});
+
+	document.getElementById(tabName).classList.add('active');
+	document.querySelector(`.tab-button[onclick="openTab('${tabName}')"]`).classList.add('active');
+	clearMap();
+
+	if (tabName === 'tab1') {
+		veBanDoCot();
+	} else {
+		veBanDoAnten();
+	}
 }
 
 function toCartesian(distance, angle) {
-        const angleRad = (angle * Math.PI) / 180;
-        return { dx: distance * Math.sin(angleRad), dy: distance * Math.cos(angleRad) };
+	const angleRad = (angle * Math.PI) / 180;
+	return { dx: distance * Math.sin(angleRad), dy: distance * Math.cos(angleRad) };
 }
 
 function toLatLng(lat, lng, dx, dy) {
-        const earthRadius = 6371000;
-        const newLat = lat + (dy / earthRadius) * (180 / Math.PI);
-        const newLng = lng + (dx / earthRadius) * (180 / Math.PI) / Math.cos(lat * Math.PI / 180);
-        return { lat: newLat, lng: newLng };
-}
-    
-function clearMap() {
-        markers.forEach(m => m.setMap(null));
-        polylines.forEach(p => p.setMap(null));
-        rectangles.forEach(r => r.setMap(null));
-        markers = [];
-        polylines = [];
-        rectangles = [];
+	const earthRadius = 6371000;
+	const newLat = lat + (dy / earthRadius) * (180 / Math.PI);
+	const newLng = lng + (dx / earthRadius) * (180 / Math.PI) / Math.cos(lat * Math.PI / 180);
+	return { lat: newLat, lng: newLng };
 }
 
-    // Hàm tạo icon SVG hình vuông có thể xoay, có thêm đường viền để giữ hình dạng
-function createRotatedSquareIcon(color, size, angle) {
-        const svg = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-                <rect width="${size}" height="${size}" fill="${color}" stroke="#000000" stroke-width="1" transform="rotate(${angle}, ${size/2}, ${size/2})"/>
-            </svg>
-        `.trim();
-        return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+function clearMap() {
+	markers.forEach(m => m.setMap(null));
+	polylines.forEach(p => p.setMap(null));
+	rectangles.forEach(r => r.setMap(null));
+	markers = [];
+	polylines = [];
+	rectangles = [];
 }
-    
-function veBanDo() {
+
+function createRotatedSquareIcon(color, size, angle) {
+	const svg = `
+		<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+			<rect width="${size}" height="${size}" fill="${color}" stroke="#000000" stroke-width="1" transform="rotate(${angle}, ${size/2}, ${size/2})"/>
+		</svg>
+	`.trim();
+	return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+}
+
+// Hàm vẽ bản đồ cho tab 1 (móng cột)
+function veBanDoCot() {
 	clearMap();
-	const lat = parseFloat(document.getElementById('lat').value);
-	const lng = parseFloat(document.getElementById('lng').value);
+	const lat = parseFloat(document.getElementById('lat1').value);
+	const lng = parseFloat(document.getElementById('lng1').value);
 	const loaiCot = document.getElementById('loaiCot').value;
 	const huongCuaTram = parseFloat(document.getElementById('huongCuaTram').value);
 	const soMongCo = parseInt(document.getElementById('soMongCo').value);
@@ -63,14 +80,14 @@ function veBanDo() {
 	const kichThuocHangRaoRong = parseFloat(document.getElementById('kichThuocHangRaoRong').value);
 	const kichThuocHangRaoDai = parseFloat(document.getElementById('kichThuocHangRaoDai').value);
 
-	document.getElementById('infoPanel').innerHTML = `
+	document.getElementById('infoPanel1').innerHTML = `
 		<p><strong>Loại cột:</strong> ${loaiCot === 'day_co' ? 'Dây co' : 'Tự đứng'}</p>
 		<p><strong>Hướng cửa trạm:</strong> ${huongCuaTram}°</p>
 		<p><strong>Kích thước hàng rào:</strong> ${kichThuocHangRaoRong} x ${kichThuocHangRaoDai} m</p>
 		<p><strong>Số móng co:</strong> ${soMongCo}</p>
 		<p><strong>Độ cao cột:</strong> ${doCaoCot} m</p>
 		<p><strong>Longitude:</strong> ${lng}</p>
-		<p><strong>Latiude:</strong> ${lat} </p>
+		<p><strong>Latitude:</strong> ${lat} </p>
 	`;
 
 	const tamCot = { lat: lat, lng: lng };
@@ -108,10 +125,10 @@ function veBanDo() {
 	}
 
 	initialLayout = { center: tamCot, mongs, originalAngles, banKinhRaMong };
-	drawMarkersAndLines();
+	drawMarkersAndLinesCot();
 }
 
-function drawMarkersAndLines() {
+function drawMarkersAndLinesCot() {
 	clearMap();
 	
 	// Tâm cột
@@ -125,7 +142,7 @@ function drawMarkersAndLines() {
 			anchor: new google.maps.Point(8, 8)
 		},
 		title: 'Tâm cột',
-		draggable: false
+		draggable: true
 	});
 	markers.push(tamCotMarker);
 
@@ -153,10 +170,7 @@ function drawMarkersAndLines() {
 		});
 		polylines.push(line);
 
-		// Trong lúc kéo → thay đổi góc tạm
 		google.maps.event.addListener(m, 'drag', (e) => onDrag(e, i + 1));
-
-		// Sau khi thả → “snap” về bán kính h/3
 		google.maps.event.addListener(m, 'dragend', (e) => {
 			const center = markers[0].getPosition();
 			const dragged = e.latLng;
@@ -173,7 +187,6 @@ function drawMarkersAndLines() {
 			});
 			initialLayout.mongs = newMongs;
 
-			// Cập nhật vị trí marker & line về đúng bán kính h/3
 			initialLayout.mongs.forEach((mong, j) => {
 				markers[j + 1].setPosition(mong);
 				polylines[j].setPath([initialLayout.center, mong]);
@@ -181,8 +194,73 @@ function drawMarkersAndLines() {
 			updateFence();
 		});
 	});
-
+	
+	// Thêm sự kiện drag và dragend cho tâm cột để di chuyển toàn bộ bản vẽ
+	google.maps.event.addListener(tamCotMarker, 'drag', (e) => onDragAll(e));
+	google.maps.event.addListener(tamCotMarker, 'dragend', (e) => onDragAll(e));
 	updateFence();
+}
+
+// Hàm mới: Di chuyển toàn bộ bản vẽ
+function onDragAll(event) {
+	const newCenter = event.latLng;
+	const latDiff = newCenter.lat() - initialLayout.center.lat;
+	const lngDiff = newCenter.lng() - initialLayout.center.lng;
+
+	// Cập nhật giá trị trong input
+	document.getElementById('lat1').value = newCenter.lat().toFixed(6);
+	document.getElementById('lng1').value = newCenter.lng().toFixed(6);
+	document.getElementById('lat2').value = newCenter.lat().toFixed(6);
+	document.getElementById('lng2').value = newCenter.lng().toFixed(6); // Sửa lỗi ở đây
+	
+	// Cập nhật vị trí của tất cả các đối tượng
+	markers.forEach(m => {
+		const oldPos = m.getPosition();
+		m.setPosition({ lat: oldPos.lat() + latDiff, lng: oldPos.lng() + lngDiff });
+	});
+
+	polylines.forEach(p => {
+		const path = p.getPath().getArray();
+		const newPath = path.map(point => ({ lat: point.lat() + latDiff, lng: point.lng() + lngDiff }));
+		p.setPath(newPath);
+	});
+
+	rectangles.forEach(r => {
+		const path = r.getPath().getArray();
+		const newPath = path.map(point => ({ lat: point.lat() + latDiff, lng: point.lng() + lngDiff }));
+		r.setPath(newPath);
+	});
+
+	initialLayout.mongs.forEach((mong, i) => {
+		mong.lat += latDiff;
+		mong.lng += lngDiff;
+	});
+	
+	// Cập nhật center trong layout cuối cùng sau khi đã tính toán
+	initialLayout.center = { lat: newCenter.lat(), lng: newCenter.lng() };
+
+	// Cập nhật bảng thông tin cho tab đang hoạt động
+	if (activeTab === 'tab1') {
+		document.getElementById('infoPanel1').innerHTML = `
+			<p><strong>Loại cột:</strong> ${document.getElementById('loaiCot').value === 'day_co' ? 'Dây co' : 'Tự đứng'}</p>
+			<p><strong>Hướng cửa trạm:</strong> ${document.getElementById('huongCuaTram').value}°</p>
+			<p><strong>Kích thước hàng rào:</strong> ${document.getElementById('kichThuocHangRaoRong').value} x ${document.getElementById('kichThuocHangRaoDai').value} m</p>
+			<p><strong>Số móng co:</strong> ${document.getElementById('soMongCo').value}</p>
+			<p><strong>Độ cao cột:</strong> ${document.getElementById('doCaoCot').value} m</p>
+			<p><strong>Longitude:</strong> ${newCenter.lng().toFixed(6)}</p>
+			<p><strong>Latitude:</strong> ${newCenter.lat().toFixed(6)} </p>
+		`;
+		updateFence();
+	} else if (activeTab === 'tab2') {
+		let infoHtml = `<p><strong>Số lượng anten:</strong> ${document.getElementById('soAnten').value}</p><p><strong>Longitude:</strong> ${newCenter.lng().toFixed(6)}</p><p><strong>Latitude:</strong> ${newCenter.lat().toFixed(6)} </p>`;
+		const soAnten = parseInt(document.getElementById('soAnten').value);
+		const antenHuongInputs = document.querySelectorAll('.anten-huong');
+		const antenDoDaiInputs = document.querySelectorAll('.anten-do-dai');
+		for (let i = 0; i < soAnten; i++) {
+			infoHtml += `<p><strong>Anten ${i + 1}:</strong> Hướng ${antenHuongInputs[i].value}° - Độ dài ${antenDoDaiInputs[i].value} m</p>`;
+		}
+		document.getElementById('infoPanel2').innerHTML = infoHtml;
+	}
 }
 
 function onDrag(event, index) {
@@ -274,7 +352,7 @@ function updateFence() {
 		map: map,
 		icon: {
 			path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-			fillColor: '#FF9900',
+			fillColor: '#00FF00',
 			fillOpacity: 1,
 			strokeWeight: 0,
 			scale: 6,
@@ -285,18 +363,143 @@ function updateFence() {
 	markers.push(window.arrowMarkerDir);
 }
 
-/*
-function loadGoogleMaps(){
-    if(typeof CONFIG==="undefined"){ console.error("CONFIG chưa load!"); return; }
-    const script=document.createElement("script");
-    script.src=`https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_KEY}&callback=initMap&libraries=geometry`;
-    script.async=true;
-    script.defer=true;
-    document.head.appendChild(script);
+// Hàm thêm các trường nhập liệu cho anten
+function addAntenFields() {
+	const soAnten = parseInt(document.getElementById('soAnten').value);
+	const container = document.getElementById('anten-fields');
+	container.innerHTML = '';
+	for (let i = 0; i < soAnten; i++) {
+		const antenGroup = document.createElement('div');
+		antenGroup.classList.add('form-group');
+		antenGroup.innerHTML = `
+			<label>Anten ${i + 1}:</label>
+			<div class="flex gap-2">
+				<input type="number" class="anten-huong rounded-lg w-1/2" placeholder="Hướng (độ)" value="${i * 120}" min="0" max="360">
+				<input type="number" class="anten-do-dai rounded-lg w-1/2" placeholder="Độ dài (m)" value="100" min="1" step="0.1">
+			</div>
+		`;
+		container.appendChild(antenGroup);
+	}
 }
 
-//   2. Chờ DOM LOAD xong rồi mới load Google Maps API
-document.addEventListener("DOMContentLoaded", function () {
-    loadGoogleMaps();
-});
-*/
+// Cập nhật các trường nhập liệu khi thay đổi số lượng anten
+document.getElementById('soAnten').addEventListener('input', addAntenFields);
+
+// Hàm vẽ bản đồ cho tab 2 (anten)
+function veBanDoAnten() {
+	clearMap();
+	const lat = parseFloat(document.getElementById('lat2').value);
+	const lng = parseFloat(document.getElementById('lng2').value);
+	const soAnten = parseInt(document.getElementById('soAnten').value);
+	const tamCot = { lat: lat, lng: lng };
+	map.setCenter(tamCot);
+
+	// Hiển thị thông tin
+	let infoHtml = `<p><strong>Số lượng anten:</strong> ${soAnten}</p><p><strong>Longitude:</strong> ${lng}</p><p><strong>Latitude:</strong> ${lat} </p>`;
+	
+	// Vẽ tâm cột
+	const tamCotMarker = new google.maps.Marker({
+		position: tamCot,
+		map: map,
+		icon: {
+			url: createRotatedSquareIcon('green', 16, 0),
+			scaledSize: new google.maps.Size(16, 16),
+			anchor: new google.maps.Point(8, 8)
+		},
+		title: 'Tâm cột',
+		draggable: true
+	});
+	markers.push(tamCotMarker);
+
+	// Vẽ các hướng anten
+	const antenHuongInputs = document.querySelectorAll('.anten-huong');
+	const antenDoDaiInputs = document.querySelectorAll('.anten-do-dai');
+	
+	//Vẽ đường hướng bắc
+	const { dx, dy } = toCartesian(50, 0);
+	const diemCuoi = toLatLng(lat, lng, dx, dy);
+
+	// Vẽ đường
+	const line = new google.maps.Polyline({
+		path: [tamCot, diemCuoi],
+		geodesic: true,
+		strokeColor: '#FF0000',
+		strokeOpacity: 1.0,
+		strokeWeight: 2,
+		map: map
+	});
+	polylines.push(line);
+	
+	// Vẽ marker ở cuối đường
+	const marker = new google.maps.Marker({
+		position: diemCuoi,
+		map: map,
+		icon: {
+			path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+			fillColor: '#FF0000',
+			fillOpacity: 1,
+			strokeWeight: 0,
+			scale: 6,
+			rotation: 0
+		},
+		title: `Hướng chính bắc`
+	});
+	markers.push(marker);
+	
+	for (let i = 0; i < soAnten; i++) {
+		const huong = parseFloat(antenHuongInputs[i].value);
+		const doDai = parseFloat(antenDoDaiInputs[i].value);
+
+		if (isNaN(huong) || isNaN(doDai)) {
+			continue;
+		}
+
+		const { dx, dy } = toCartesian(doDai, huong);
+		const diemCuoi = toLatLng(lat, lng, dx, dy);
+
+		// Vẽ đường
+		const line = new google.maps.Polyline({
+			path: [tamCot, diemCuoi],
+			geodesic: true,
+			strokeColor: '#00FF00',
+			strokeOpacity: 1.0,
+			strokeWeight: 2,
+			map: map
+		});
+		polylines.push(line);
+
+		// Vẽ marker ở cuối đường
+		const marker = new google.maps.Marker({
+			position: diemCuoi,
+			map: map,
+			icon: {
+				path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+				fillColor: '#00FF00',
+				fillOpacity: 1,
+				strokeWeight: 0,
+				scale: 6,
+				rotation: huong
+			},
+			title: `Anten ${i + 1}: ${huong}° - ${doDai}m`
+		});
+		markers.push(marker);
+
+		infoHtml += `<p><strong>Anten ${i + 1}:</strong> Hướng ${huong}° - Độ dài ${doDai} m</p>`;
+	}
+	
+	document.getElementById('infoPanel2').innerHTML = infoHtml;
+	
+	// Thêm sự kiện drag và dragend cho tâm cột để di chuyển toàn bộ bản vẽ
+	google.maps.event.addListener(tamCotMarker, 'drag', (e) => onDragAll(e));
+	google.maps.event.addListener(tamCotMarker, 'dragend', (e) => onDragAll(e));
+}
+
+//function loadGoogleMaps(){
+//    if(typeof CONFIG==="undefined"){ console.error("CONFIG chưa load!"); return; }
+//    const script=document.createElement("script");
+ //   script.src=`https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_KEY}&callback=initMap&libraries=geometry`;
+//    script.async=true;
+//    script.defer=true;
+//    document.head.appendChild(script);
+//}
+//loadGoogleMaps();
