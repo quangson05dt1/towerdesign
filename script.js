@@ -5,6 +5,21 @@ let rectangles = [];
 let initialLayout = {};
 let activeTab = 'tab1';
 
+
+/* ============================================================
+   1. BẮT BUỘC: Export initMap ra global để Google Maps gọi được
+   ============================================================ */
+window.initMap = initMap;
+
+/* ============================================================
+   2. Google Maps chỉ load sau khi DOM sẵn sàng (fix mobile)
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", function () {
+    loadGoogleMaps();
+});
+
+
+
 function initMap() {
 	const center = { lat: -25.744104, lng: 32.671572 };
 	map = new google.maps.Map(document.getElementById("map"), {
@@ -494,12 +509,12 @@ function veBanDoAnten() {
 	google.maps.event.addListener(tamCotMarker, 'dragend', (e) => onDragAll(e));
 }
 
-//function loadGoogleMaps(){
-//    if(typeof CONFIG==="undefined"){ console.error("CONFIG chưa load!"); return; }
-//    const script=document.createElement("script");
- //   script.src=`https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_KEY}&callback=initMap&libraries=geometry`;
-//    script.async=true;
-//    script.defer=true;
-//    document.head.appendChild(script);
-//}
+function loadGoogleMaps(){
+    if(typeof CONFIG==="undefined"){ console.error("CONFIG chưa load!"); return; }
+    const script=document.createElement("script");
+    script.src=`https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_KEY}&callback=initMap&libraries=geometry`;
+    script.async=true;
+    script.defer=true;
+    document.head.appendChild(script);
+}
 //loadGoogleMaps();
