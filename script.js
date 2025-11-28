@@ -5,19 +5,6 @@ let rectangles = [];
 let initialLayout = {};
 
 
-/* ============================================================
-   1. ĐẢM BẢO Google Maps callback toàn cục (bắt buộc cho mobile)
-   ============================================================ */
-window.initMap = initMap;
-
-/* ============================================================
-   2. Chờ DOM LOAD xong rồi mới load Google Maps API
-   ============================================================ */
-document.addEventListener("DOMContentLoaded", function () {
-    loadGoogleMaps();
-});
-
-
 function initMap() {
         const center = { lat: -25.744104, lng:   32.671572 };
         map = new google.maps.Map(document.getElementById("map"), {
@@ -302,3 +289,15 @@ function loadGoogleMaps(){
     script.defer=true;
     document.head.appendChild(script);
 }
+/* ============================================================
+   1. ĐẢM BẢO Google Maps callback toàn cục (bắt buộc cho mobile)
+   ============================================================ */
+window.initMap = initMap;
+
+/* ============================================================
+   2. Chờ DOM LOAD xong rồi mới load Google Maps API
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", function () {
+    loadGoogleMaps();
+});
+
