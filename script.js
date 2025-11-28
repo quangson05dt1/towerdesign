@@ -3,6 +3,10 @@ let markers = [];
 let polylines = [];
 let rectangles = [];
 let initialLayout = {};
+/* ============================================================
+   1. ĐẢM BẢO Google Maps callback toàn cục (bắt buộc cho mobile)
+   ============================================================ */
+window.initMap = initMap;
 
 
 function initMap() {
@@ -289,11 +293,6 @@ function loadGoogleMaps(){
     script.defer=true;
     document.head.appendChild(script);
 }
-/* ============================================================
-   1. ĐẢM BẢO Google Maps callback toàn cục (bắt buộc cho mobile)
-   ============================================================ */
-window.initMap = initMap;
-
 /* ============================================================
    2. Chờ DOM LOAD xong rồi mới load Google Maps API
    ============================================================ */
