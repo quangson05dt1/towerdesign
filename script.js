@@ -6,7 +6,7 @@ let initialLayout = {};
 /* ============================================================
    1. ĐẢM BẢO Google Maps callback toàn cục (bắt buộc cho mobile)
    ============================================================ */
-window.initMap = initMap;
+//window.initMap = initMap;
 
 
 function initMap() {
@@ -285,6 +285,7 @@ function updateFence() {
 	markers.push(window.arrowMarkerDir);
 }
 
+/*
 function loadGoogleMaps(){
     if(typeof CONFIG==="undefined"){ console.error("CONFIG chưa load!"); return; }
     const script=document.createElement("script");
@@ -293,10 +294,9 @@ function loadGoogleMaps(){
     script.defer=true;
     document.head.appendChild(script);
 }
-/* ============================================================
-   2. Chờ DOM LOAD xong rồi mới load Google Maps API
-   ============================================================ */
+
+//   2. Chờ DOM LOAD xong rồi mới load Google Maps API
 document.addEventListener("DOMContentLoaded", function () {
     loadGoogleMaps();
 });
-
+*/
