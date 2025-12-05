@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thiết kế vị trí cột và móng</title>
+    <title data-lang="title">Thiết kế vị trí cột và anten</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -21,6 +23,16 @@
             padding: 1.5rem;
             border-radius: 1rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .language-switch {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+        select {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ccc;
         }
         .form-group {
             margin-bottom: 1rem;
@@ -65,87 +77,197 @@
             font-size: 0.875rem;
             color: #1f2937;
         }
-        
-        /* Cải thiện bố cục trên di động */
+
         .map-container {
-            height: 60vh; /* Chiều cao cố định trên di động */
+            height: 60vh;
         }
 
-        /* Bố cục trên máy tính để bàn (màn hình lớn hơn 1024px) */
+        .tab-button {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            background-color: #e5e7eb;
+            font-weight: 600;
+            color: #4b5563;
+        }
+        .tab-button.active {
+            background-color: #3b82f6;
+            color: #fff;
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
         @media (min-width: 1024px) {
             .container {
                 display: flex;
                 flex-direction: row;
                 min-height: 90vh;
             }
-            .control-panel {
-                flex: 1;
-            }
-            .map-container {
-                flex: 3;
-                height: auto; /* Bỏ chiều cao cố định để lấp đầy không gian */
-            }
+            .control-panel { flex: 1; }
+            .map-container { flex: 3; height: auto; }
         }
     </style>
 </head>
+
 <body>
 
+<!-- Bộ chọn ngôn ngữ -->
+<div class="language-switch">
+    <select id="languageSelect" onchange="changeLanguage()">
+        <option value="vi">🇻🇳 Tiếng Việt</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="pt">🇵🇹 Português</option>
+    </select>
+</div>
+
+
 <div class="container flex flex-col lg:flex-row">
-    <!-- Bảng điều khiển -->
+
     <div class="control-panel">
-        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Thiết kế vị trí cột</h1>
-        <div class="form-group">
-            <label for="lat">Tọa độ tâm cột (Vĩ độ):</label>
-            <input type="text" id="lat" value="-25.744104" class="rounded-lg">
+
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800" data-lang="header">
+            Thiết kế vị trí cột và anten
+        </h1>
+
+        <!-- Tabs -->
+        <div class="flex border-b border-gray-300 mb-4">
+            <button class="tab-button active rounded-t-lg"
+                    onclick="openTab('tab1')" data-lang="tab1">
+                Thiết kế móng cột
+            </button>
+
+            <button class="tab-button rounded-t-lg"
+                    onclick="openTab('tab2')" data-lang="tab2">
+                Thiết kế anten
+            </button>
         </div>
-        <div class="form-group">
-            <label for="lng">Tọa độ tâm cột (Kinh độ):</label>
-            <input type="text" id="lng" value=" 32.671572" class="rounded-lg">
-        </div>
-        <div class="form-group">
-            <label for="loaiCot">Loại cột:</label>
-            <select id="loaiCot" class="rounded-lg">
-                <option value="day_co">Dây co</option>
-                <option value="tu_dung">Tự đứng</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="huongCuaTram">Hướng cửa trạm (góc Azimuth - độ):</label>
-            <input type="number" id="huongCuaTram" value="0" min="0" max="360" class="rounded-lg">
-        </div>
-        <div class="form-group">
-            <label for="kichThuocHangRaoRong">Kích thước hàng rào (rộng x dài) (m):</label>
-            <div class="flex gap-2">
-                <input type="number" id="kichThuocHangRaoRong" value="6" min="1" step="0.1" class="rounded-lg">
-                <input type="number" id="kichThuocHangRaoDai" value="8" min="1" step="0.1" class="rounded-lg">
+
+        <!-- TAB 1 -->
+        <div id="tab1" class="tab-content active">
+
+            <div class="form-group">
+                <label data-lang="lat">Tọa độ tâm cột (Vĩ độ):</label>
+                <input type="text" id="lat1" value="-25.744104">
             </div>
+
+            <div class="form-group">
+                <label data-lang="lng">Tọa độ tâm cột (Kinh độ):</label>
+                <input type="text" id="lng1" value="32.671572">
+            </div>
+
+            <div class="form-group">
+                <label data-lang="towerType">Loại cột:</label>
+                <select id="loaiCot">
+                    <option value="day_co" data-lang="guyed">Dây co</option>
+                    <option value="tu_dung" data-lang="self">Tự đứng</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label data-lang="gateAzimuth">Hướng cửa trạm (góc Azimuth):</label>
+                <input type="number" id="huongCuaTram" value="0" min="0" max="360">
+            </div>
+
+            <div class="form-group">
+                <label data-lang="fence">Kích thước hàng rào (rộng x dài):</label>
+                <div class="flex gap-2">
+                    <input type="number" id="kichThuocHangRaoRong" value="6" min="1" step="0.1">
+                    <input type="number" id="kichThuocHangRaoDai" value="8" min="1" step="0.1">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label data-lang="anchors">Số móng co:</label>
+                <select id="soMongCo">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label data-lang="height">Độ cao cột (m):</label>
+                <input type="number" id="doCaoCot" value="60.5" step="0.1">
+            </div>
+
+            <button class="btn" onclick="veBanDoCot()" data-lang="drawMap1">
+                Vẽ bản đồ
+            </button>
+
+            <div id="infoPanel1" class="info-panel"></div>
         </div>
-        <div class="form-group">
-            <label for="soMongCo">Số móng co:</label>
-            <select id="soMongCo" class="rounded-lg">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3" selected>3</option>
-                <option value="4">4</option>
-            </select>
+
+
+        <!-- TAB 2 -->
+        <div id="tab2" class="tab-content">
+
+            <div class="form-group">
+                <label data-lang="lat">Tọa độ tâm cột (Vĩ độ):</label>
+                <input type="text" id="lat2" value="-25.744104">
+            </div>
+
+            <div class="form-group">
+                <label data-lang="lng">Tọa độ tâm cột (Kinh độ):</label>
+                <input type="text" id="lng2" value="32.671572">
+            </div>
+
+            <div class="form-group">
+                <label data-lang="antenCount">Số lượng anten:</label>
+                <input type="number" id="soAnten" value="3" min="1">
+            </div>
+
+            <div id="anten-fields"></div>
+
+            <button class="btn mt-4" onclick="addAntenFields()" data-lang="addAnten">
+                Thêm anten
+            </button>
+
+            <button class="btn mt-4" onclick="veBanDoAnten()" data-lang="drawMap2">
+                Vẽ bản đồ
+            </button>
+
+            <div id="infoPanel2" class="info-panel"></div>
         </div>
-        <div class="form-group">
-            <label for="doCaoCot">Độ cao cột (m):</label>
-            <input type="number" id="doCaoCot" value="60.5" min="1" step="0.1" class="rounded-lg">
-        </div>
-        <button class="btn" onclick="veBanDo()">Vẽ bản đồ</button>
-        <div id="infoPanel" class="info-panel"></div>
+
     </div>
-    
-    <!-- Khung chứa bản đồ -->
+
     <div class="map-container">
         <div id="map"></div>
     </div>
+
 </div>
 
-<!-- -->
-<script src="config.js"></script>
-<script src="script.js"></script>
+<!-- Script -->
+<script src="config.js" type="text/javascript"></script>
+<script src="lang.js" type="text/javascript"></script>
+<script src="script.js" type="text/javascript"></script>
+
+<!-- Load Google Maps API -->
+<script>
+/*
+function loadGoogleMaps() {
+    if (typeof CONFIG === "undefined") {
+      console.error("CONFIG chưa được load!");
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_KEY}&callback=initMap`;
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+}
+
+window.addEventListener("load", () => {
+    setTimeout(loadGoogleMaps, 200);
+});
+*/
+</script>
 
 </body>
 </html>
